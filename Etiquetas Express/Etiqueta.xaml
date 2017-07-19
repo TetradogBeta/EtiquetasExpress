@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+	x:Class="Etiquetas_Express.Etiqueta" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Border BorderThickness="10">
+		<Grid
+			x:Name="gEtiqueta"
+			Background="Gray" MinHeight="100" MaxHeight="100" MinWidth="300" MaxWidth="300">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition
+					Width="0.0410958904109589*" />
+				<ColumnDefinition
+					Width="2.92328767123286*" />
+				<ColumnDefinition
+					Width="0.0356164383561644*" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition
+					Height="0.107692307692307*" />
+				<RowDefinition
+					Height="2.79616980529843*" />
+				<RowDefinition
+					Height="0.1*" />
+			</Grid.RowDefinitions>
+			<TextBox
+				x:Name="txtBody"
+				Grid.Column="1"
+				Grid.Row="1"
+				Background="Yellow" />
+		</Grid>
+	</Border>
+</UserControl>
