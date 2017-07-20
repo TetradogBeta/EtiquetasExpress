@@ -16,10 +16,16 @@
 		<Menu>
 			<MenuItem
 				Header="Importar"
-				Click="MenuImportar_Click" />
+			>
+				<MenuItem Header="Xml" Click="MenuImportarXml_Click"/>
+				<MenuItem Header="Csv" Click="MenuImportarCsv_Click"/>
+			</MenuItem>
 			<MenuItem
 				Header="Exportar"
-				Click="MenuExportar_Click" />
+			>
+				<MenuItem Header="Xml" Click="MenuExportarXml_Click"/>
+				<MenuItem Header="Csv" Click="MenuExportarCsv_Click"/>
+			</MenuItem>
 			<MenuItem
 				Header="Imprimir"
 				Click="MenuImprimir_Click" />
@@ -52,14 +58,14 @@
 			</Grid.ColumnDefinitions>
 			<TextBlock>
 				<Run
-					Text="Linea1" />
+					Text="Código" />
 			</TextBlock>
 			<TextBox
 				x:Name="txtLinea1"
 				Grid.Column="1"
 				TextWrapping="WrapWithOverflow" />
 			<TextBlock
-				Text="Linea2"
+				Text="Nombre"
 				Grid.Column="2" />
 			<TextBox
 				x:Name="txtLinea2"

@@ -15,6 +15,8 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Gabriel.Cat.Extension;
+using Microsoft.Win32;
 
 namespace Etiquetas_Express
 {
@@ -36,17 +38,51 @@ namespace Etiquetas_Express
 			get{return this.ugEtiquetas;}
 		}
 		
-		void MenuImportar_Click(object sender, RoutedEventArgs e)
+		void MenuImportarXml_Click(object sender, RoutedEventArgs e)
+		{
+			OpenFileDialog opnImportXml=new OpenFileDialog();
+			opnImportXml.Filter="Articulos EXPORTADOS|*.xml";
+			if(opnImportXml.ShowDialog().GetValueOrDefault())
+				ugEtiquetas.Children.AddRange(Etiqueta.ImportarDesdeXml(opnImportXml.FileName));
+		}
+		void MenuImportarCsv_Click(object sender, RoutedEventArgs e)
 		{
 			throw new NotImplementedException();
 		}
-		void MenuExportar_Click(object sender, RoutedEventArgs e)
+		void MenuExportarXml_Click(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
+			const string EXTENSION=".xml";
+			string path=EscogerDestinoArchivo(EXTENSION);
+			if(path!=null){
+				Etiqueta.ExportarXml(etiquetaPlantilla,ugEtiquetas.Children.Casting<Etiqueta>()).Save(path);
+			}
+		}
+		void MenuExportarCsv_Click(object sender, RoutedEventArgs e)
+		{
+			const string EXTENSION=".csv";
+			string path=EscogerDestinoArchivo(EXTENSION);
+			if(path!=null){
+				System.IO.File.AppendAllText(path,Etiqueta.ExportarCsv(ugEtiquetas.Children.Casting<Etiqueta>()));
+			}
+		}
+		string EscogerDestinoArchivo(string extension)
+		{
+			SaveFileDialog sfDialog=new SaveFileDialog();
+			sfDialog.DefaultExt=extension;
+			sfDialog.AddExtension=true;
+			string resultado=null;
+			if(ugEtiquetas.Children.Count>0){
+				if(sfDialog.ShowDialog().GetValueOrDefault())
+					resultado=sfDialog.FileName;
+			}else{
+				MessageBox.Show("No hay etiquetas para exportar!","Atención",MessageBoxButton.OK,MessageBoxImage.Information);
+			}
+			return resultado;
 		}
 		void MenuSobre_Click(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
+			if(MessageBox.Show("Este programa esta hecho para hacer etiquetas rápidamente\nEl programa esta bajo licencia GNU ¿Quiere ver el código fuente?","Sobre la aplicación",MessageBoxButton.YesNo,MessageBoxImage.Question)==MessageBoxResult.Yes)
+				System.Diagnostics.Process.Start("https://github.com/TetradogBeta/EtiquetasExpress");
 		}
 		void MenuImprimir_Click(object sender, RoutedEventArgs e)
 		{
@@ -68,10 +104,10 @@ namespace Etiquetas_Express
 		}
 		void BtnAñadir_Click(object sender, RoutedEventArgs e)
 		{
-			StringBuilder strEspacio1=new StringBuilder(),strEspacio2=new StringBuilder();
 			Etiqueta etiquetaNueva=etiquetaPlantilla.GenerarCopia();
 			//lo pongo en el medio
-			etiquetaNueva.txtBody.Text=strEspacio1.ToString()+txtLinea1.Text+"\n"+strEspacio2.ToString()+txtLinea2.Text;
+			etiquetaNueva.Codigo=txtLinea1.Text;
+			etiquetaNueva.NombreArticulo=txtLinea2.Text;
 			ugEtiquetas.Children.Add(etiquetaNueva);
 		}
 	}
