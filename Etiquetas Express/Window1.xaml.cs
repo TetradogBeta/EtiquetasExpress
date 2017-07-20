@@ -15,6 +15,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml;
 using Gabriel.Cat.Extension;
 using Microsoft.Win32;
 
@@ -25,25 +26,49 @@ namespace Etiquetas_Express
 	/// </summary>
 	public partial class Window1 : Window
 	{
+		const string NOMBREARCHIVOCONFIG="etiquetasExpress.config";
+		static readonly string PathConfig=System.IO.Path.Combine(Environment.CurrentDirectory,NOMBREARCHIVOCONFIG);
 		Etiqueta etiquetaPlantilla;
 		
 		public Window1()
 		{
+			XmlDocument xmlConfig;
 			etiquetaPlantilla=new Etiqueta();
+			
+			if(System.IO.File.Exists(PathConfig))
+			{
+				xmlConfig=new XmlDocument();
+				xmlConfig.Load(PathConfig);
+				etiquetaPlantilla.PonerPlantilla(xmlConfig.FirstChild);
+			}
 			InitializeComponent();
+			Closing+=GuardarConfiguracion;
 		}
 		
 		public System.Windows.Controls.Primitives.UniformGrid Etiquetas
 		{
 			get{return this.ugEtiquetas;}
 		}
-		
+
+		void GuardarConfiguracion(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			XmlDocument xml;
+			if(etiquetaPlantilla.Equals(new Etiqueta())){
+				if(System.IO.File.Exists(PathConfig))
+					System.IO.File.Delete(PathConfig);
+			}else{
+				xml=new XmlDocument();
+				xml.LoadXml(etiquetaPlantilla.GetPlantillaXmlNode().OuterXml);
+				xml.Save(PathConfig);
+			}
+			
+		}
 		void MenuImportarXml_Click(object sender, RoutedEventArgs e)
 		{
 			OpenFileDialog opnImportXml=new OpenFileDialog();
 			opnImportXml.Filter="Articulos EXPORTADOS|*.xml";
 			if(opnImportXml.ShowDialog().GetValueOrDefault())
-				ugEtiquetas.Children.AddRange(Etiqueta.ImportarDesdeXml(opnImportXml.FileName)); 
+				ugEtiquetas.Children.AddRange(Etiqueta.ImportarDesdeXml(opnImportXml.FileName));
 		}
 		void MenuImportarCsv_Click(object sender, RoutedEventArgs e)
 		{

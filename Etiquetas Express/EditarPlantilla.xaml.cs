@@ -23,7 +23,7 @@ namespace Etiquetas_Express
 	/// </summary>
 	public partial class EditarPlantilla : Window
 	{
-		Etiqueta plaçntilla;
+		Etiqueta plantilla;
 		public EditarPlantilla()
 		{
 			InitializeComponent();

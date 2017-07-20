@@ -1,8 +1,60 @@
-﻿<Window x:Class="Etiquetas_Express.ImportarDesdeCsv"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	Title="Etiquetas_Express" Height="300" Width="300">
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="Etiquetas_Express.ImportarDesdeCsv" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:Etiquetas_Express"
+	Title="Etiquetas Express -Importar CSV-"
+	Width="420"
+	Height="308">
 	<Grid>
-		
+		<Grid.RowDefinitions>
+			<RowDefinition Height="30"/>
+			<RowDefinition
+				Height="*" />
+			<RowDefinition
+				Height="50" />
+		</Grid.RowDefinitions>
+		<Menu>
+		<MenuItem Header="Eliminar Seleccionados" Click="MenuEliminarSeleccionados_Click"/>
+		</Menu>
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+			<ListBox
+				x:Name="lstEtiquetas" SelectionMode="Extended" />
+		<local:Etiqueta x:Name="ePreview" Grid.Column="1"/>
+		</Grid>
+		<Grid
+			Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition
+					Width="0.597222222222222*" />
+				<ColumnDefinition
+					Width="1.14824359148243*" />
+				<ColumnDefinition
+					Width="1.24657534246575*" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<TextBlock>
+				<Run
+					Text="Código" />
+			</TextBlock>
+			<ListBox
+				x:Name="lstColumnasCodigo"
+				Grid.Column="1"
+				SelectionMode="Extended"
+				SelectionChanged="Lst_SelectionChanged"
+			/>
+			<TextBlock
+				Text="Nombre Articulo"
+				Grid.Column="2" />
+			<ListBox
+				x:Name="lstColumnasNombreArticulo"
+				Grid.Column="3"
+				SelectionMode="Extended"
+				SelectionChanged="Lst_SelectionChanged"
+			/>
+		</Grid>
 	</Grid>
 </Window>
