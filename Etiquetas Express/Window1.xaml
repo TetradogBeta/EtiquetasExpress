@@ -37,6 +37,7 @@
 				Click="MenuSobre_Click" />
 		</Menu>
 		<ScrollViewer
+			x:Name="scEtiquetas"
 			Grid.Row="1"
 			VerticalScrollBarVisibility="Auto">
 			<UniformGrid

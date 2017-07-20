@@ -14,7 +14,7 @@
 				Height="50" />
 		</Grid.RowDefinitions>
 		<Menu>
-		<MenuItem Header="Eliminar Seleccionados" Click="MenuEliminarSeleccionados_Click"/>
+			<MenuItem Header="Eliminar Seleccionados" Click="MenuEliminarSeleccionados_Click"/>
 		</Menu>
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
@@ -23,7 +23,9 @@
 			</Grid.ColumnDefinitions>
 			<ListBox
 				x:Name="lstEtiquetas" SelectionMode="Extended" />
-		<local:Etiqueta x:Name="ePreview" Grid.Column="1"/>
+			<Viewbox Grid.Column="1">
+				<local:Etiqueta x:Name="ePreview" />
+			</Viewbox>
 		</Grid>
 		<Grid
 			Grid.Row="2">

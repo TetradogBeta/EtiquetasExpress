@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -74,7 +75,8 @@ namespace Etiquetas_Express
 		{
 			ImportarDesdeCsv importarCsv=new ImportarDesdeCsv();
 			importarCsv.ShowDialog();
-			ugEtiquetas.Children.AddRange(importarCsv.GetEtiquetasCargadas());
+			if(importarCsv.lstEtiquetas.Items.Count>0)
+				ugEtiquetas.Children.AddRange(importarCsv.GetEtiquetasCargadas());
 		}
 		void MenuExportarXml_Click(object sender, RoutedEventArgs e)
 		{
@@ -113,13 +115,52 @@ namespace Etiquetas_Express
 		}
 		void MenuImprimir_Click(object sender, RoutedEventArgs e)
 		{
+			const int DPI=96;
+			const int MARGEN=270;
+			Size pageSize = new Size(8.26 * DPI, 11.69 * DPI); // A4 page, at 96 dpi
+			int itemsAdd=0;
+			FixedDocument document = new FixedDocument();
+			FixedPage fixedPage;
+			PageContent pageContent;
 			PrintDialog printDialog=new PrintDialog();
+			IList<Etiqueta> etiquetas=ugEtiquetas.Children.Casting<Etiqueta>();
+			UniformGrid ug;
+		
+			document.DocumentPaginator.PageSize = pageSize;
+			
+			do{
+				ug=new UniformGrid();
+				ug.Columns=2;
+				while((ug.Children.Count/2)*etiquetaPlantilla.gEtiqueta.MaxHeight<pageSize.Height-MARGEN&&itemsAdd<etiquetas.Count)
+					ug.Children.Add(etiquetas[itemsAdd++].Clone());
+				// Create FixedPage
+				fixedPage = new FixedPage();
+				fixedPage.Width = pageSize.Width;
+				fixedPage.Height = pageSize.Height;
+				// Add visual, measure/arrange page.
+				fixedPage.Children.Add(ug);
+				fixedPage.Measure(pageSize);
+				fixedPage.Arrange(new Rect(new Point(), pageSize));
+				fixedPage.UpdateLayout();
+
+				// Add page to document
+				pageContent = new PageContent();				
+				((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+				document.Pages.Add(pageContent);
+
+			}while(itemsAdd<etiquetas.Count);
+			// Send to the printer.
+			
+
+
+			
+			printDialog.SelectedPagesEnabled=true;
 			if(printDialog.ShowDialog().GetValueOrDefault())
 			{
-				printDialog.PrintVisual(ugEtiquetas,"Etiquetas");
+				printDialog.PrintDocument(document.DocumentPaginator, "Etiquetas a Imprimir "+DateTime.Now);
 				
 			}else{
-				MessageBox.Show("No se ha cancelado la impresión","Cancelado",MessageBoxButton.OK,MessageBoxImage.Information);
+				MessageBox.Show("Se ha cancelado la impresión","Cancelado",MessageBoxButton.OK,MessageBoxImage.Information);
 			}
 		}
 		void MenuEditarEtiqueta_Click(object sender, RoutedEventArgs e)

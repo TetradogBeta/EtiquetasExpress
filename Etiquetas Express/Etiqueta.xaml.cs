@@ -204,6 +204,14 @@ namespace Etiquetas_Express
 			xml.LoadXml(strNodo.ToString());
 			return xml.FirstChild;
 		}
+		public Etiqueta Clone()
+		{
+			Etiqueta clon=new Etiqueta();
+			clon.PonerPlantilla(this);
+			clon.Codigo=Codigo;
+			clon.NombreArticulo=NombreArticulo;
+			return clon;
+		}
 		public static Etiqueta[] ImportarDesdeXml(string pathXml)
 		{
 			XmlDocument xml=new XmlDocument();

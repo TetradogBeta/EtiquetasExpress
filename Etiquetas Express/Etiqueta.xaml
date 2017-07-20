@@ -10,21 +10,21 @@
 			Background="Gray" MinHeight="100" MaxHeight="100" MinWidth="300" MaxWidth="300">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition
-					Width="0.0410958904109589*" />
+					Width="7" />
 				<ColumnDefinition
-					Width="2.92328767123286*" />
+					Width="*" />
 				<ColumnDefinition
-					Width="0.0356164383561644*" />
+					Width="7" />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition
-					Height="0.107692307692307*" />
+					Height="7" />
 				<RowDefinition
-					Height="2.79616980529843*" />
+					Height="*" />
 				<RowDefinition
-					Height="2.79616980529843*" />
+					Height="*" />
 				<RowDefinition
-					Height="0.1*" />
+					Height="7" />
 			</Grid.RowDefinitions>
 			<Grid
 				x:Name="gCodigo"

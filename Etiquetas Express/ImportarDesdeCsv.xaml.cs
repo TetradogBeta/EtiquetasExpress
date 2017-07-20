@@ -29,23 +29,31 @@ namespace Etiquetas_Express
 		string[] articulosAImportar;
 		public ImportarDesdeCsv()
 		{
-			
+			bool importarHastaQueNoDeProblemas=true;
 			OpenFileDialog opn=new OpenFileDialog();
 			opn.Filter="Articulos a Importar|*.csv";
 			InitializeComponent();
 			//cargo el archivo
-			if(opn.ShowDialog().GetValueOrDefault())
-			{
-				//cargo
-				articulosAImportar=System.IO.File.ReadAllLines(opn.FileName);
-				lstColumnasCodigo.Items.AddRange(articulosAImportar[0].Split(Separador));
-				lstColumnasNombreArticulo.Items.AddRange(articulosAImportar[0].Split(Separador));
-				lstEtiquetas.Items.AddRange(articulosAImportar.SubList(1));//Quito la metadata
+			while(importarHastaQueNoDeProblemas)
+				try{
+				if(opn.ShowDialog().GetValueOrDefault())
+				{
+					//cargo
+					articulosAImportar=System.IO.File.ReadAllLines(opn.FileName);
+					lstColumnasCodigo.Items.AddRange(articulosAImportar[0].Split(Separador));
+					lstColumnasNombreArticulo.Items.AddRange(articulosAImportar[0].Split(Separador));
+					lstEtiquetas.Items.AddRange(articulosAImportar.SubList(1));//Quito la metadata
+					
+					
+				}else{
+					MessageBox.Show("No se ha seleccionado ningún archivo","Atención",MessageBoxButton.OK,MessageBoxImage.Information);
+					
+					this.Close();
+				}
 				
+				importarHastaQueNoDeProblemas=false;
+			}catch{
 				
-			}else{
-				MessageBox.Show("No se ha seleccionado ningún archivo","Atención",MessageBoxButton.OK,MessageBoxImage.Information);
-				this.Close();
 			}
 			
 		}
@@ -72,12 +80,12 @@ namespace Etiquetas_Express
 				campos=lstEtiquetas.Items[i].ToString().Split(Separador);
 				strAux.Clear();
 				for(int j=0;j<lstColumnasCodigo.SelectedItems.Count;j++)
-					strAux.Append(campos[lstColumnasCodigo.Items.IndexOf(lstColumnasCodigo.SelectedItems[i])]);
+					strAux.Append(campos[lstColumnasCodigo.Items.IndexOf(lstColumnasCodigo.SelectedItems[j])]);
 				etiquetas[i].Codigo=strAux.ToString();
 				strAux.Clear();
 				for(int j=0;j<lstColumnasNombreArticulo.SelectedItems.Count;j++)
-					strAux.Append(campos[lstColumnasNombreArticulo.Items.IndexOf(lstColumnasNombreArticulo.SelectedItems[i])]);
-				etiquetas[i].Codigo=strAux.ToString();
+					strAux.Append(campos[lstColumnasNombreArticulo.Items.IndexOf(lstColumnasNombreArticulo.SelectedItems[j])]);
+				etiquetas[i].NombreArticulo=strAux.ToString();
 				
 			}
 			return etiquetas;
