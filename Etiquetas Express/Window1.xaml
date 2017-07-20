@@ -29,9 +29,10 @@
 			<MenuItem
 				Header="Imprimir"
 				Click="MenuImprimir_Click" />
-			<MenuItem
+		<!-- 	<MenuItem
 				Header="Editar plantilla etiqueta"
 				Click="MenuEditarEtiqueta_Click" />
+		-->
 			<MenuItem
 				Header="Sobre"
 				Click="MenuSobre_Click" />

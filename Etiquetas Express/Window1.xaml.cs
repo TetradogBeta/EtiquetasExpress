@@ -54,7 +54,7 @@ namespace Etiquetas_Express
 		void GuardarConfiguracion(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			XmlDocument xml;
-			if(etiquetaPlantilla.Equals(new Etiqueta())){
+			if(etiquetaPlantilla.Iguales(new Etiqueta())){
 				if(System.IO.File.Exists(PathConfig))
 					System.IO.File.Delete(PathConfig);
 			}else{
@@ -117,67 +117,79 @@ namespace Etiquetas_Express
 		{
 			const int DPI=96;
 			const int MARGEN=270;
-			Size pageSize = new Size(8.26 * DPI, 11.69 * DPI); // A4 page, at 96 dpi
+			Size pageSize; // A4 page, at 96 dpi
 			int itemsAdd=0;
-			FixedDocument document = new FixedDocument();
+			FixedDocument document;
 			FixedPage fixedPage;
 			PageContent pageContent;
-			PrintDialog printDialog=new PrintDialog();
-			IList<Etiqueta> etiquetas=ugEtiquetas.Children.Casting<Etiqueta>();
+			PrintDialog printDialog;
+			IList<Etiqueta> etiquetas;
 			UniformGrid ug;
-		
-			document.DocumentPaginator.PageSize = pageSize;
 			
-			do{
-				ug=new UniformGrid();
-				ug.Columns=2;
-				while((ug.Children.Count/2)*etiquetaPlantilla.gEtiqueta.MaxHeight<pageSize.Height-MARGEN&&itemsAdd<etiquetas.Count)
-					ug.Children.Add(etiquetas[itemsAdd++].Clone());
-				// Create FixedPage
-				fixedPage = new FixedPage();
-				fixedPage.Width = pageSize.Width;
-				fixedPage.Height = pageSize.Height;
-				// Add visual, measure/arrange page.
-				fixedPage.Children.Add(ug);
-				fixedPage.Measure(pageSize);
-				fixedPage.Arrange(new Rect(new Point(), pageSize));
-				fixedPage.UpdateLayout();
+			if(ugEtiquetas.Children.Count>0){
+				pageSize = new Size(8.26 * DPI, 11.69 * DPI); // A4 page, at 96 dpi
+				itemsAdd=0;
+				document = new FixedDocument();
+				printDialog=new PrintDialog();
+				etiquetas=ugEtiquetas.Children.Casting<Etiqueta>();
 
-				// Add page to document
-				pageContent = new PageContent();				
-				((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-				document.Pages.Add(pageContent);
-
-			}while(itemsAdd<etiquetas.Count);
-			// Send to the printer.
-			
-
-
-			
-			printDialog.SelectedPagesEnabled=true;
-			if(printDialog.ShowDialog().GetValueOrDefault())
-			{
-				printDialog.PrintDocument(document.DocumentPaginator, "Etiquetas a Imprimir "+DateTime.Now);
 				
-			}else{
-				MessageBox.Show("Se ha cancelado la impresión","Cancelado",MessageBoxButton.OK,MessageBoxImage.Information);
+				document.DocumentPaginator.PageSize = pageSize;
+				
+				do{
+					ug=new UniformGrid();
+					ug.Columns=2;
+					while((ug.Children.Count/2)*etiquetaPlantilla.gEtiqueta.MaxHeight<pageSize.Height-MARGEN&&itemsAdd<etiquetas.Count)
+						ug.Children.Add(etiquetas[itemsAdd++].Clone());
+					// Create FixedPage
+					fixedPage = new FixedPage();
+					fixedPage.Width = pageSize.Width;
+					fixedPage.Height = pageSize.Height;
+					// Add visual, measure/arrange page.
+					fixedPage.Children.Add(ug);
+					fixedPage.Measure(pageSize);
+					fixedPage.Arrange(new Rect(new Point(), pageSize));
+					fixedPage.UpdateLayout();
+
+					// Add page to document
+					pageContent = new PageContent();
+					((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+					document.Pages.Add(pageContent);
+
+				}while(itemsAdd<etiquetas.Count);
+				// Send to the printer.
+				
+
+
+				
+				printDialog.SelectedPagesEnabled=true;
+				if(printDialog.ShowDialog().GetValueOrDefault())
+				{
+					printDialog.PrintDocument(document.DocumentPaginator, "Etiquetas a Imprimir "+DateTime.Now);
+					
+				}else{
+					MessageBox.Show("Se ha cancelado la impresión","Cancelado",MessageBoxButton.OK,MessageBoxImage.Information);
+				}
+			}
+			else{
+				MessageBox.Show("No hay etiquetas para imprimir!","Atención",MessageBoxButton.OK,MessageBoxImage.Information);
+			}
+			}
+			void MenuEditarEtiqueta_Click(object sender, RoutedEventArgs e)
+			{
+				//Edita la plantilla
+				new EditarPlantilla(){Plantilla=etiquetaPlantilla}.ShowDialog();
+				//pongo la plantilla
+				for(int i=0;i<ugEtiquetas.Children.Count;i++)
+					((Etiqueta)ugEtiquetas.Children[i]).PonerPlantilla(etiquetaPlantilla);
+			}
+			void BtnAñadir_Click(object sender, RoutedEventArgs e)
+			{
+				Etiqueta etiquetaNueva=etiquetaPlantilla.GenerarCopia();
+				//lo pongo en el medio
+				etiquetaNueva.Codigo=txtLinea1.Text;
+				etiquetaNueva.NombreArticulo=txtLinea2.Text;
+				ugEtiquetas.Children.Add(etiquetaNueva);
 			}
 		}
-		void MenuEditarEtiqueta_Click(object sender, RoutedEventArgs e)
-		{
-			//Edita la plantilla
-			new EditarPlantilla(){Plantilla=etiquetaPlantilla}.ShowDialog();
-			//pongo la plantilla
-			for(int i=0;i<ugEtiquetas.Children.Count;i++)
-				((Etiqueta)ugEtiquetas.Children[i]).PonerPlantilla(etiquetaPlantilla);
-		}
-		void BtnAñadir_Click(object sender, RoutedEventArgs e)
-		{
-			Etiqueta etiquetaNueva=etiquetaPlantilla.GenerarCopia();
-			//lo pongo en el medio
-			etiquetaNueva.Codigo=txtLinea1.Text;
-			etiquetaNueva.NombreArticulo=txtLinea2.Text;
-			ugEtiquetas.Children.Add(etiquetaNueva);
-		}
 	}
-}

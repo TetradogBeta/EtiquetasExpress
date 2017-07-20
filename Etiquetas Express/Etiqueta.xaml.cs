@@ -212,6 +212,14 @@ namespace Etiquetas_Express
 			clon.NombreArticulo=NombreArticulo;
 			return clon;
 		}
+		public  bool Iguales(object obj)
+		{
+			Etiqueta other=obj as Etiqueta;
+			bool iguales=other!=null;
+			if(iguales)
+				iguales=other.Codigo==Codigo&&other.NombreArticulo==NombreArticulo&&gEtiqueta.Height.Equals(other.gEtiqueta.Height)&&gEtiqueta.Width.Equals(other.gEtiqueta.Width);
+			return iguales;
+		}
 		public static Etiqueta[] ImportarDesdeXml(string pathXml)
 		{
 			XmlDocument xml=new XmlDocument();
