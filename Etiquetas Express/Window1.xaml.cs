@@ -43,11 +43,13 @@ namespace Etiquetas_Express
 			OpenFileDialog opnImportXml=new OpenFileDialog();
 			opnImportXml.Filter="Articulos EXPORTADOS|*.xml";
 			if(opnImportXml.ShowDialog().GetValueOrDefault())
-				ugEtiquetas.Children.AddRange(Etiqueta.ImportarDesdeXml(opnImportXml.FileName));
+				ugEtiquetas.Children.AddRange(Etiqueta.ImportarDesdeXml(opnImportXml.FileName)); 
 		}
 		void MenuImportarCsv_Click(object sender, RoutedEventArgs e)
 		{
-			throw new NotImplementedException();
+			ImportarDesdeCsv importarCsv=new ImportarDesdeCsv();
+			importarCsv.ShowDialog();
+			ugEtiquetas.Children.AddRange(importarCsv.GetEtiquetasCargadas());
 		}
 		void MenuExportarXml_Click(object sender, RoutedEventArgs e)
 		{
@@ -98,6 +100,7 @@ namespace Etiquetas_Express
 		void MenuEditarEtiqueta_Click(object sender, RoutedEventArgs e)
 		{
 			//Edita la plantilla
+			new EditarPlantilla(){Plantilla=etiquetaPlantilla}.ShowDialog();
 			//pongo la plantilla
 			for(int i=0;i<ugEtiquetas.Children.Count;i++)
 				((Etiqueta)ugEtiquetas.Children[i]).PonerPlantilla(etiquetaPlantilla);

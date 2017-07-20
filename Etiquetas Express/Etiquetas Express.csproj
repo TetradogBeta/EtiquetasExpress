@@ -75,8 +75,16 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EditarPlantilla.xaml.cs">
+      <DependentUpon>EditarPlantilla.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Etiqueta.xaml.cs">
       <DependentUpon>Etiqueta.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ImportarDesdeCsv.xaml.cs">
+      <DependentUpon>ImportarDesdeCsv.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,7 +95,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="EditarPlantilla.xaml" />
     <Page Include="Etiqueta.xaml" />
+    <Page Include="ImportarDesdeCsv.xaml" />
     <Page Include="Window1.xaml" />
   </ItemGroup>
   <ItemGroup>
