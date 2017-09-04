@@ -46,9 +46,9 @@ namespace Etiquetas_Express
 			Closing+=GuardarConfiguracion;
 		}
 		
-		public System.Windows.Controls.Primitives.UniformGrid Etiquetas
+		public WrapPanel Etiquetas
 		{
-			get{return this.ugEtiquetas;}
+			get{return this.wpEtiquetas;}
 		}
 
 		void GuardarConfiguracion(object sender, System.ComponentModel.CancelEventArgs e)
@@ -69,21 +69,21 @@ namespace Etiquetas_Express
 			OpenFileDialog opnImportXml=new OpenFileDialog();
 			opnImportXml.Filter="Articulos EXPORTADOS|*.xml";
 			if(opnImportXml.ShowDialog().GetValueOrDefault())
-				ugEtiquetas.Children.AddRange(Etiqueta.ImportarDesdeXml(opnImportXml.FileName));
+				wpEtiquetas.Children.AddRange(Etiqueta.ImportarDesdeXml(opnImportXml.FileName));
 		}
 		void MenuImportarCsv_Click(object sender, RoutedEventArgs e)
 		{
 			ImportarDesdeCsv importarCsv=new ImportarDesdeCsv();
 			importarCsv.ShowDialog();
 			if(importarCsv.lstEtiquetas.Items.Count>0)
-				ugEtiquetas.Children.AddRange(importarCsv.GetEtiquetasCargadas());
+				wpEtiquetas.Children.AddRange(importarCsv.GetEtiquetasCargadas());
 		}
 		void MenuExportarXml_Click(object sender, RoutedEventArgs e)
 		{
 			const string EXTENSION=".xml";
 			string path=EscogerDestinoArchivo(EXTENSION);
 			if(path!=null){
-				Etiqueta.ExportarXml(etiquetaPlantilla,ugEtiquetas.Children.Casting<Etiqueta>()).Save(path);
+				Etiqueta.ExportarXml(etiquetaPlantilla,wpEtiquetas.Children.Casting<Etiqueta>()).Save(path);
 			}
 		}
 		void MenuExportarCsv_Click(object sender, RoutedEventArgs e)
@@ -91,7 +91,7 @@ namespace Etiquetas_Express
 			const string EXTENSION=".csv";
 			string path=EscogerDestinoArchivo(EXTENSION);
 			if(path!=null){
-				System.IO.File.AppendAllText(path,Etiqueta.ExportarCsv(ugEtiquetas.Children.Casting<Etiqueta>()));
+				System.IO.File.AppendAllText(path,Etiqueta.ExportarCsv(wpEtiquetas.Children.Casting<Etiqueta>()));
 			}
 		}
 		string EscogerDestinoArchivo(string extension)
@@ -100,7 +100,7 @@ namespace Etiquetas_Express
 			sfDialog.DefaultExt=extension;
 			sfDialog.AddExtension=true;
 			string resultado=null;
-			if(ugEtiquetas.Children.Count>0){
+			if(wpEtiquetas.Children.Count>0){
 				if(sfDialog.ShowDialog().GetValueOrDefault())
 					resultado=sfDialog.FileName;
 			}else{
@@ -116,7 +116,7 @@ namespace Etiquetas_Express
 		void MenuImprimir_Click(object sender, RoutedEventArgs e)
 		{
 			const int DPI=96;
-			const int MARGEN=270;
+			const int MARGEN=2*DPI;
 			Size pageSize; // A4 page, at 96 dpi
 			int itemsAdd=0;
 			FixedDocument document;
@@ -124,29 +124,42 @@ namespace Etiquetas_Express
 			PageContent pageContent;
 			PrintDialog printDialog;
 			IList<Etiqueta> etiquetas;
-			UniformGrid ug;
-			
-			if(ugEtiquetas.Children.Count>0){
-				pageSize = new Size(8.26 * DPI, 11.69 * DPI); // A4 page, at 96 dpi
+			WrapPanel wp;
+			Etiqueta aux;
+			if(wpEtiquetas.Children.Count>0){
+				pageSize = new Size(12 * DPI, 11.69 * DPI); // A4 page, at 96 dpi
 				itemsAdd=0;
 				document = new FixedDocument();
 				printDialog=new PrintDialog();
-				etiquetas=ugEtiquetas.Children.Casting<Etiqueta>();
+				etiquetas=wpEtiquetas.Children.Casting<Etiqueta>();
 
 				
 				document.DocumentPaginator.PageSize = pageSize;
 				
 				do{
-					ug=new UniformGrid();
-					ug.Columns=2;
-					while((ug.Children.Count/2)*etiquetaPlantilla.gEtiqueta.MaxHeight<pageSize.Height-MARGEN&&itemsAdd<etiquetas.Count)
-						ug.Children.Add(etiquetas[itemsAdd++].Clone());
+					wp=new WrapPanel();
+					wp.HorizontalAlignment=HorizontalAlignment.Stretch;
+					wp.MinWidth=pageSize.Width;
+					wp.MaxWidth=pageSize.Width;
+					wp.MaxHeight=0;
+					while(wp.MaxHeight<pageSize.Height-MARGEN&&itemsAdd<etiquetas.Count)
+					{
+						aux=etiquetas[itemsAdd].Clone(true);
+						aux.HorizontalAlignment=HorizontalAlignment.Stretch;
+						aux.MaxWidth=etiquetas[itemsAdd].ActualHeight;
+						aux.MinWidth=etiquetas[itemsAdd].ActualWidth;
+						
+						wp.Children.Add(aux);
+						wp.MaxHeight+=etiquetas[itemsAdd].ActualHeight;
+						itemsAdd++;
+						
+					}
 					// Create FixedPage
 					fixedPage = new FixedPage();
 					fixedPage.Width = pageSize.Width;
 					fixedPage.Height = pageSize.Height;
 					// Add visual, measure/arrange page.
-					fixedPage.Children.Add(ug);
+					fixedPage.Children.Add(wp);
 					fixedPage.Measure(pageSize);
 					fixedPage.Arrange(new Rect(new Point(), pageSize));
 					fixedPage.UpdateLayout();
@@ -166,6 +179,8 @@ namespace Etiquetas_Express
 				if(printDialog.ShowDialog().GetValueOrDefault())
 				{
 					printDialog.PrintDocument(document.DocumentPaginator, "Etiquetas a Imprimir "+DateTime.Now);
+					if(!System.Diagnostics.Debugger.IsAttached)
+						MessageBox.Show("El documento se va ha imprimir en breve.","Mandando a la impresora!",MessageBoxButton.OK,MessageBoxImage.Information);
 					
 				}else{
 					MessageBox.Show("Se ha cancelado la impresión","Cancelado",MessageBoxButton.OK,MessageBoxImage.Information);
@@ -174,22 +189,22 @@ namespace Etiquetas_Express
 			else{
 				MessageBox.Show("No hay etiquetas para imprimir!","Atención",MessageBoxButton.OK,MessageBoxImage.Information);
 			}
-			}
-			void MenuEditarEtiqueta_Click(object sender, RoutedEventArgs e)
-			{
-				//Edita la plantilla
-				new EditarPlantilla(){Plantilla=etiquetaPlantilla}.ShowDialog();
-				//pongo la plantilla
-				for(int i=0;i<ugEtiquetas.Children.Count;i++)
-					((Etiqueta)ugEtiquetas.Children[i]).PonerPlantilla(etiquetaPlantilla);
-			}
-			void BtnAñadir_Click(object sender, RoutedEventArgs e)
-			{
-				Etiqueta etiquetaNueva=etiquetaPlantilla.GenerarCopia();
-				//lo pongo en el medio
-				etiquetaNueva.Codigo=txtLinea1.Text;
-				etiquetaNueva.NombreArticulo=txtLinea2.Text;
-				ugEtiquetas.Children.Add(etiquetaNueva);
-			}
+		}
+		void MenuEditarEtiqueta_Click(object sender, RoutedEventArgs e)
+		{
+			//Edita la plantilla
+			new EditarPlantilla(){Plantilla=etiquetaPlantilla}.ShowDialog();
+			//pongo la plantilla
+			for(int i=0;i<wpEtiquetas.Children.Count;i++)
+				((Etiqueta)wpEtiquetas.Children[i]).PonerPlantilla(etiquetaPlantilla);
+		}
+		void BtnAñadir_Click(object sender, RoutedEventArgs e)
+		{
+			Etiqueta etiquetaNueva=etiquetaPlantilla.GenerarCopia();
+			//lo pongo en el medio
+			etiquetaNueva.Codigo=txtLinea1.Text;
+			etiquetaNueva.NombreArticulo=txtLinea2.Text;
+			wpEtiquetas.Children.Add(etiquetaNueva);
 		}
 	}
+}

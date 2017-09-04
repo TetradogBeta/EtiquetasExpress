@@ -41,9 +41,9 @@
 			x:Name="scEtiquetas"
 			Grid.Row="1"
 			VerticalScrollBarVisibility="Auto">
-			<UniformGrid
-				x:Name="ugEtiquetas"
-				Columns="2" />
+			<WrapPanel
+				x:Name="wpEtiquetas"
+				 />
 		</ScrollViewer>
 		<Grid
 			Grid.Row="2">

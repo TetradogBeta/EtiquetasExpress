@@ -204,12 +204,17 @@ namespace Etiquetas_Express
 			xml.LoadXml(strNodo.ToString());
 			return xml.FirstChild;
 		}
-		public Etiqueta Clone()
+		public Etiqueta Clone(bool porImprimir=false)
 		{
 			Etiqueta clon=new Etiqueta();
 			clon.PonerPlantilla(this);
 			clon.Codigo=Codigo;
 			clon.NombreArticulo=NombreArticulo;
+			if(porImprimir)
+			{
+				clon.Width=ActualWidth;
+				clon.Height=ActualHeight;
+			}
 			return clon;
 		}
 		public  bool Iguales(object obj)
@@ -229,7 +234,7 @@ namespace Etiquetas_Express
 		public static Etiqueta[] ImportarDesdeXml(XmlDocument xml)
 		{
 			Etiqueta plantilla;
-			Etiqueta[] etiquetas;			
+			Etiqueta[] etiquetas;
 			//cargo la plantilla
 			plantilla=new Etiqueta();
 			plantilla.PonerPlantilla(xml.FirstChild.FirstChild);
